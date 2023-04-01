@@ -1,0 +1,8 @@
+new_vue-main/node_modules/
+rumor_flask/venv
+rumor_flask/.idea/
+rumor_flask/database/__pycache__/
+rumor_flask/database/model/__pycache__/
+rumor_flask/extension/__pycache__/
+rumor_flask/web_flask/__pycache__/
+rumor_flask/database/database_config.py
