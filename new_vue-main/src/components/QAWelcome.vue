@@ -27,7 +27,7 @@
                   margin-bottom: 10px;
                 "
               >
-                欢迎来到 Piracy Spy --
+                欢迎来到 Rumor Killer --
                 知识产权侵权保护溯源系统，我是您的智能助理。
               </div>
             </div></a-col

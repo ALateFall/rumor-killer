@@ -25,7 +25,7 @@
 		
 		<!-- Settings Drawer Content -->
 		<div class="drawer-content">
-			<h6>Piracy Spy 系统设置</h6>
+			<h6>Rumor Killer 系统设置</h6>
 			<p>调整您的系统设置。</p>
 			<hr>
 			<div class="sidebar-color">

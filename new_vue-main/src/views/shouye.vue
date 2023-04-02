@@ -1,297 +1,190 @@
 <template>
   <div>
     <a-row :gutter="24">
-      <a-col :span="14">
-        <a-card class="second-line mb-24">
+      <a-col :span="leftwidth">
+        <a-card style="height: 550px;" class="second-line mb-24">
+          <template #title>
+            <h6>实时热点推特</h6>
+            <p>点击可查看详细信息</p>
+          </template>
+          <a-carousel autoplay dot-position="right" :autoplay-speed=10>
+            <a-row :gutter="24">
+              <div v-infinite-scroll="handleInfiniteOnLoad" class="demo-infinite-container"
+                :infinite-scroll-disabled="busy" :infinite-scroll-distance="10">
+                <a-list :data-source="data">
+                  <a-list-item v-on:click="clickTweet(item)" slot="renderItem" slot-scope="item">
+                    <a-list-item-meta :description="item.create_time">
+                      <a slot="title">{{ item.user_name }}</a>
+                      <a-avatar slot="avatar" :src="url" />
+                    </a-list-item-meta>
+                    {{ item.tweet_text }}
+                  </a-list-item>
+
+                  <div v-if="loading && !busy" class="demo-loading-container">
+                    <a-spin />
+                  </div>
+                </a-list>
+              </div>
+            </a-row>
+          </a-carousel>
         </a-card>
       </a-col>
-      <a-col :span="10">
-        <a-card class="second-line mb-24">
+      <a-col :span="rightwidth">
+        <a-card v-if="!this.image" style="height: 550px;" class="second-line mb-24">
+          <template #title>
+            <h6>推特详细信息</h6>
+            <p>推特正文及谣言判定结果</p>
+          </template>
+          <a-row style="height: 100px; margin-left:20px; margin-top: 20px;" :gutter="24">
+            <a-col :span="4">
+              <a-avatar :src="url" />
+            </a-col>
+            <a-col :span="20">
+              <span style="margin-left: -85px; position: relative; top: 0px;"> <b style="font-size: 20px;"> {{
+                this.tweet_info.user_name }} </b> </span>
+            </a-col>
+          </a-row>
+          <a-row style="height: 100px; margin-left:25px; margin-top: -50px;">
+            <a-col :span="3">
+              <a-icon style="font-size: 25px; color:#82C5EA" type="user-add" /></a-col>
+            <a-col :span="3">
+              <span style="font-family: SimSun; font-size: 16px; position: relative; right: 60px;">粉丝数:{{
+                this.tweet_info.user_followers_count }}</span>
+            </a-col>
+            <a-col :span="3">
+              <a-icon style="font-size: 25px; color:#82C5EA" type="usergroup-delete" />
+            </a-col>
+            <a-col :span="3">
+              <span style="font-family: SimSun; font-size: 16px; position: relative; right: 60px;">好友数:{{
+                this.tweet_info.user_friends_count }}</span>
+            </a-col>
+            <a-col :span="12"></a-col>
+          </a-row>
+          <a-row>
+            <a-col :span="20">
+              <span style="font-family: SimSun; font-size: 16px; position: relative; right: -30px; bottom: 50px;">
+                {{ this.tweet_info.tweet_text }}
+              </span>
+            </a-col>
+          </a-row>
+          <a-row v-if="rumor_image" :gutter="24">
+            <a-col :span="7"></a-col>
+            <a-col :span="12">
+              <el-image style="width: 260px; height: 260px; margin-top: -40px;"  :src="this.tweet_info.images_url" fit="contain"></el-image>
+            </a-col>
+          </a-row>
+          <a-row style="height: 100px; margin-left:25px; margin-top: -50px;">
+            <a-col :span="3">
+              <a-icon style="font-size: 25px; color:#82C5EA" type="share-alt" /></a-col>
+            <a-col :span="3">
+              <span style="font-family: SimSun; font-size: 16px; position: relative; right: 60px;">转发:{{
+                this.tweet_info.retweet_count }}</span>
+            </a-col>
+            <a-col :span="12"></a-col>
+          </a-row>
+
         </a-card>
+        <el-image v-if="this.image" style="margin-left:0px; margin-top:-100px; width: 700px; height: 700px" :src="rumor"
+          fit="contain"></el-image>
       </a-col>
     </a-row>
 
-    <!-- <a-row :gutter="24">
-      <a-col>
-        <a-card
-          style="height: 230px; padding: 16px"
-          :bordered="false"
-          class="header-solid third-line dashboard-bar-line mb-24"
-          :bodyStyle="{ padding: '0 12px 8px 3px' }"
-        >
-          <a-row>
-            <a-col :span="12">
-              <h6>任务实时处理状态</h6>
-              <a-carousel autoplay dot-position="right" autoplay-speed="10">
-                <div style="text-align: center">
-                  <a-tag style="margin-bottom: 30px" color="orange"
-                    >深度分析任务-百度爬虫</a-tag
-                  >
-                  <a-row>
-                    <a-row :gutter="20">
-                      <a-col :span="6">
-                        <div style="font-family: Open Sans; font-weight: bold">
-                          任务中已分析网站:
-                        </div></a-col
-                      >
-                      <a-col :span="16"
-                        ><a-progress :percent="this.per0[0]" status="active"
-                      /></a-col>
-                      <a-col :span="2"><a-spin size="small" /></a-col>
-                    </a-row>
-                  </a-row>
-                  <br />
-                  <a-row>
-                    <a-row :gutter="20">
-                      <a-col :span="6">
-                        <div style="font-family: Open Sans; font-weight: bold">
-                          当前分析网站进度:
-                        </div></a-col
-                      >
-                      <a-col :span="16"
-                        ><a-progress :percent="this.per0[1]" status="active"
-                      /></a-col>
-                      <a-col :span="2"><a-spin size="small" /></a-col>
-                    </a-row>
-                  </a-row>
-                  <br />
-                  <a-row>
-                    <a-row :gutter="20">
-                      <a-col :span="6">
-                        <div style="font-family: Open Sans; font-weight: bold">
-                          任务中已聚类网站:
-                        </div></a-col
-                      >
-                      <a-col :span="16"
-                        ><a-progress :percent="this.per0[2]" status="active"
-                      /></a-col>
-                      <a-col :span="2"><a-spin size="small" /></a-col>
-                    </a-row>
-                  </a-row>
-                </div>
-                <div style="text-align: center">
-                  <a-tag style="margin-bottom: 30px" color="purple"
-                    >深度分析任务-必应爬虫</a-tag
-                  >
-                  <a-row>
-                    <a-row :gutter="20">
-                      <a-col :span="6">
-                        <div style="font-family: Open Sans; font-weight: bold">
-                          任务中已分析网站:
-                        </div></a-col
-                      >
-                      <a-col :span="16"
-                        ><a-progress :percent="this.per1[0]" status="active"
-                      /></a-col>
-                      <a-col :span="2"><a-spin size="small" /></a-col>
-                    </a-row>
-                  </a-row>
-                  <br />
-                  <a-row>
-                    <a-row :gutter="20">
-                      <a-col :span="6">
-                        <div style="font-family: Open Sans; font-weight: bold">
-                          当前分析网站进度:
-                        </div></a-col
-                      >
-                      <a-col :span="16"
-                        ><a-progress :percent="this.per1[1]" status="active"
-                      /></a-col>
-                      <a-col :span="2"><a-spin size="small" /></a-col>
-                    </a-row>
-                  </a-row>
-                  <br />
-                  <a-row>
-                    <a-row :gutter="20">
-                      <a-col :span="6">
-                        <div style="font-family: Open Sans; font-weight: bold">
-                          任务中已聚类网站:
-                        </div></a-col
-                      >
-                      <a-col :span="16"
-                        ><a-progress :percent="this.per1[2]" status="active"
-                      /></a-col>
-                      <a-col :span="2"><a-spin size="small" /></a-col>
-                    </a-row>
-                  </a-row>
-                </div>
-                <div style="text-align: center">
-                  <a-tag style="margin-bottom: 30px" color="blue"
-                    >深度分析任务-谷歌爬虫</a-tag
-                  >
-                  <a-row>
-                    <a-row :gutter="20">
-                      <a-col :span="6">
-                        <div style="font-family: Open Sans; font-weight: bold">
-                          任务中已分析网站:
-                        </div></a-col
-                      >
-                      <a-col :span="16"
-                        ><a-progress :percent="this.per2[0]" status="active"
-                      /></a-col>
-                      <a-col :span="2"><a-spin size="small" /></a-col>
-                    </a-row>
-                  </a-row>
-                  <br />
-                  <a-row>
-                    <a-row :gutter="20">
-                      <a-col :span="6">
-                        <div style="font-family: Open Sans; font-weight: bold">
-                          当前分析网站进度:
-                        </div></a-col
-                      >
-                      <a-col :span="16"
-                        ><a-progress :percent="this.per2[1]" status="active"
-                      /></a-col>
-                      <a-col :span="2"><a-spin size="small" /></a-col>
-                    </a-row>
-                  </a-row>
-                  <br />
-                  <a-row>
-                    <a-row :gutter="20">
-                      <a-col :span="6">
-                        <div style="font-family: Open Sans; font-weight: bold">
-                          任务中已聚类网站:
-                        </div></a-col
-                      >
-                      <a-col :span="16"
-                        ><a-progress :percent="this.per2[2]" status="active"
-                      /></a-col>
-                      <a-col :span="2"><a-spin size="small" /></a-col>
-                    </a-row>
-                  </a-row>
-                </div>
-              </a-carousel>
-            </a-col>
-            <a-col :span="12"> <Pie style="margin-bottom: 20px; margin-right:60px; overflow:visible;"></Pie> </a-col>
-          </a-row>
-        </a-card>
-      </a-col>
-    </a-row>
-    <a-row :gutter="24">
-      <a-col :span="13">
-        <a-card
-          :bordered="false"
-          class="header-solid third-line dashboard-bar-line"
-          :bodyStyle="{ padding: '0 12px 8px 3px' }"
-        >
-          <template #title>
-            <h6>数据获取引擎</h6>
-            <p>本月新增<span style="color: rgb(0, 130, 251)">-33%</span></p>
-            <p>本月新增<span style="color: rgb(179, 127, 235)">-57%</span></p>
-          </template>
-          <template #extra>
-            <a-badge
-              color="primary"
-              class="badge-dot-primary"
-              text="获取任务"
-            />
-            <a-badge
-              color="primary"
-              class="badge-dot-secondary"
-              text="分析任务"
-            />
-          </template>
-          <BarsForDash></BarsForDash>
-        </a-card>
-      </a-col>
-      <a-col :span="11">
-        <a-card class="third-line">
-          <IndexRoll></IndexRoll>
-        </a-card>
-      </a-col>
-    </a-row> -->
   </div>
 </template>
 
 <script>
-import CardBarChart from "../components/Cards/CardBarChart";
-import Lines from "../components/MyCharts/Lines";
-import CardLineChart from "../components/Cards/CardLineChart.vue";
-import Mymap from "../components/Mymap";
-import BarsForDash from "../components/BarsForDash";
-import IndexRoll from "../components/IndexRoll";
-import Pie from "../components/Charts/ChartPieIndex.vue";
+import tweets from "../components/rumor_killer_com/tweets.vue";
+import rumor_killer from "../assets/img/rumor_killer.png";
+import tweetURL from "../assets/img/tweet.png"
+import infiniteScroll from "vue-infinite-scroll";
 
 export default {
   components: {
-    Lines,
-    Pie,
-    CardBarChart,
-    CardLineChart,
-    Mymap,
-    BarsForDash,
-    IndexRoll,
+    tweets
   },
-
+  directives: { infiniteScroll },
   data() {
     return {
-      ciycle_width: 8,
-      per0: [69, 12, 27],
-      per1: [22, 46, 12],
-      per2: [36, 86, 44],
+      data: [],
+      image: true,
+      rumor: rumor_killer,
+      data: [],
+      url: tweetURL,
+      loading: false,
+      busy: false,
+      leftwidth: 12,
+      rightwidth: 12,
+      tweet_info: {},
+      rumor_image: false,
     };
   },
   beforeMount() {
-    setInterval(() => {
-      this.$set(this.per0, 0, this.per0[0] + 0.5);
-    }, 2000);
-    setInterval(() => {
-      this.$set(this.per0, 1, this.per0[1] + 2);
-      if (this.per0[1] >= 100) {
-        this.$set(this.per0, 1, 0);
-      }
-    }, 2000);
-    setInterval(() => {
-      this.$set(this.per0, 2, this.per0[2] + 1);
-    }, 2000);
-    setInterval(() => {
-      this.$set(this.per1, 0, this.per1[0] + 0.5);
-    }, 2000);
-    setInterval(() => {
-      this.$set(this.per1, 1, this.per1[1] + 2);
-      if (this.per1[1] >= 100) {
-        this.$set(this.per1, 1, 0);
-      }
-    }, 2000);
-    setInterval(() => {
-      this.$set(this.per1, 2, this.per1[2] + 1);
-    }, 2000);
-    setInterval(() => {
-      this.$set(this.per2, 0, this.per2[0] + 0.5);
-    }, 2000);
-    setInterval(() => {
-      this.$set(this.per2, 1, this.per2[1] + 2);
-      if (this.per2[1] >= 100) {
-        this.$set(this.per2, 1, 0);
-      }
-    }, 2000);
-    setInterval(() => {
-      this.$set(this.per2, 2, this.per2[2] + 1);
-    }, 2000);
+    this.fetchData();
   },
-  methods: {},
+  methods: {
+    async fetchData(callback) {
+      await this.axios
+        .post("http://localhost:5000/tweets/getTrendingTweets")
+        .then(response => {
+          // this.data = data
+          console.log(response);
+          for (var i = 0; i < 10; i++) {
+            this.data.push(response.data[i]);
+          }
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+
+    clickTweet(item) {
+      this.image = false;
+      this.leftwidth = 10;
+      this.rightwidth = 14;
+      this.tweet_info = item;
+      if (this.tweet_info.images_url == "") {
+        this.rumor_image = false;
+      } else {
+        this.rumor_image = true;
+        this.tweet_info.images_url = this.tweet_info.images_url.split(",")[0];
+      }
+
+    },
+
+    handleInfiniteOnLoad() {
+      const data = this.data;
+      this.loading = true;
+      if (data.length > 500) {
+        this.$message.warning("没有更多了~");
+        this.busy = true;
+        this.loading = false;
+        return;
+      }
+      this.fetchData((res) => {
+        this.loading = false;
+      });
+    },
+  },
 };
 </script>
 
 <style scoped lang="scss">
-.first-line {
-  height: 160px;
-}
-
 .second-line {
   height: 278px;
 }
 
-.third-line {
-  height: 320px;
+.demo-infinite-container {
+  /* border: 1px solid #e8e8e8; */
+  /* border-radius: 4px; */
+  overflow: auto;
+  padding: 8px 24px;
+  height: 460px;
 }
 
-.card-title {
-  /* margin-top: 12px; */
-  margin-left: 12px;
+.demo-loading-container {
+  position: absolute;
+  bottom: 40px;
+  width: 100%;
+  text-align: center;
 }
-
-.map::v-deep {
-  height: 580px;
-}</style>
+</style>

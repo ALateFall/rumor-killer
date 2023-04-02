@@ -5,14 +5,13 @@ from concurrent.futures import ThreadPoolExecutor
 from urllib.parse import unquote
 from database.utils import insert_tweet
 
-trending_json_dir = "trending_json/"
-
 
 def is_English(item):
     return all(ord(c) < 128 for c in item)
 
 
-def get_trending_tweets() -> list:
+def get_trending_tweets(json_file_location="spider/trending_json/location.json",
+                        trending_json_dir="spider/trending_json") -> list:
     """
     Make a Scrapy Requst to Twitter , both Store the Results in Mysql and Json.
     :param: None    :return: A List of Tweets on Trending.
@@ -20,7 +19,8 @@ def get_trending_tweets() -> list:
 
     timestamp = time.strftime("%Y%m%d_%H%M%S")
     filename = f"trending_{timestamp}"
-    trending_things = trending.get_trendings(proxy='127.0.0.1:7890', filename=trending_json_dir + filename)
+    trending_things = trending.get_trendings(json_file_location=json_file_location, proxy='127.0.0.1:7890',
+                                             filename=trending_json_dir + filename)
 
     # with open('trending_json/' + filename + '.json', 'r') as f:
     #     trending_data = json.load(f)
@@ -51,7 +51,7 @@ def get_trending_tweets() -> list:
                 print('Time out in scrape the keyword :{}. continue.'.format(keyword))
                 continue
 
-    time.sleep(10)
+    # time.sleep(10)
     return result
 
 
@@ -67,5 +67,7 @@ def tweets_to_mysql(tweets: list) -> bool:
                                likes_count=record["likes_count"]))
 
 
-tweet = get_trending_tweets()
-tweets_to_mysql(tweet)
+if __name__ == '__main__':
+    tweet = get_trending_tweets(json_file_location="trending_json/location.json",
+                                trending_json_dir="trending_json")
+    tweets_to_mysql(tweet)

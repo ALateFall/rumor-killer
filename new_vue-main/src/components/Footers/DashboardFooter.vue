@@ -8,7 +8,7 @@
 				<!-- Footer Copyright Notice -->
 				<br>
 				<p class="copyright">
-					Piracy Spy © 2022
+					Rumor Killer © 2023
 				</p>
 				<!-- / Footer Copyright Notice -->
 

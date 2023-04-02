@@ -12,7 +12,7 @@
     >
       <div class="content">
         <h1 class="mb-5">登录</h1>
-        <p class="text-lg">在这里，登入您的Piracy Spy系统。</p>
+        <p class="text-lg">在这里，登入您的Rumor Killer系统。</p>
       </div>
     </div>
     <!-- / Sign Up Image And Headings -->

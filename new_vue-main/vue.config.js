@@ -4,7 +4,7 @@ module.exports = {
 		config
 			.plugin('html')
 			.tap(args => {
-				args[0].title = 'Piracy Spy'
+				args[0].title = 'Rumor Killer'
 				return args
 			})
 	}

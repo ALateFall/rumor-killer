@@ -2,8 +2,9 @@
 the "tweets" in the Mysql
 """
 
-from app import db
-
+from database.database import db
+from datetime import datetime
+import pytz
 
 class Tweets(db.Model):
     __tablename__ = 'tweets'
@@ -22,3 +23,26 @@ class Tweets(db.Model):
     @staticmethod
     def anything():
         pass
+
+    def to_dict(self):
+        date_format = "%a %b %d %H:%M:%S %z %Y"
+        parsed_time = datetime.strptime(self.create_time, date_format)
+
+        beijing = pytz.timezone('Asia/Shanghai')
+        parsed_time = parsed_time.astimezone(beijing)
+
+        new_date_format = "%Y-%m-%d %H:%M:%S"
+        new_date_string = parsed_time.strftime(new_date_format)
+        return {
+            'keywords': self.keywords,
+            'tweet_text': self.tweet_text,
+            'tweet_id': self.tweet_id,
+            'user_name': self.user_name,
+            'user_id': self.user_id,
+            'user_followers_count': self.user_followers_count,
+            'user_friends_count': self.user_friends_count,
+            'images_url': self.images_url,
+            'create_time': new_date_string,
+            'retweet_count': self.retweet_count,
+            'likes_count': self.likes_count
+        }
