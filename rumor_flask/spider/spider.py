@@ -11,7 +11,7 @@ def is_English(item):
 
 
 def get_trending_tweets(json_file_location="spider/trending_json/location.json",
-                        trending_json_dir="spider/trending_json") -> list:
+                        trending_json_dir="spider/trending_json/") -> list:
     """
     Make a Scrapy Requst to Twitter , both Store the Results in Mysql and Json.
     :param: None    :return: A List of Tweets on Trending.
