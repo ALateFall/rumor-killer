@@ -1,3 +1,0 @@
-[submodule "rumor_flask/twitter_scrapy"]
-	path = rumor_flask/twitter_scrapy
-	url = https://github.com/shaikhsajid1111/twitter-scraper-selenium
