@@ -8,6 +8,7 @@ tweet_blueprint = Blueprint('tweets', __name__, url_prefix="/tweets", template_f
 @tweet_blueprint.route('/getTrendingTweets', methods=["post"])
 def getTrendingTweets():
     result = query_tweet(0, 20)
+    # print(result)
     return result
 
 

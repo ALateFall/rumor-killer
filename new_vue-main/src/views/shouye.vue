@@ -2,7 +2,7 @@
   <div>
     <a-row :gutter="24">
       <a-col :span="leftwidth">
-        <a-card style="height: 550px;" class="second-line mb-24">
+        <a-card style="height: 600px;" class="second-line mb-24">
           <template #title>
             <h6>实时热点推特</h6>
             <p>点击可查看详细信息</p>
@@ -30,7 +30,7 @@
         </a-card>
       </a-col>
       <a-col :span="rightwidth">
-        <a-card v-if="!this.image" style="height: 550px;" class="second-line mb-24">
+        <a-card v-if="!this.image" style="height: 600px;" class="second-line mb-24">
           <template #title>
             <h6>推特详细信息</h6>
             <p>推特正文及谣言判定结果</p>
@@ -40,22 +40,22 @@
               <a-avatar :src="url" />
             </a-col>
             <a-col :span="20">
-              <span style="margin-left: -85px; position: relative; top: 0px;"> <b style="font-size: 20px;"> {{
+              <span style="margin-left: -65px; position: relative; top: 0px;"> <b style="font-size: 20px;"> {{
                 this.tweet_info.user_name }} </b> </span>
             </a-col>
           </a-row>
           <a-row style="height: 100px; margin-left:25px; margin-top: -50px;">
             <a-col :span="3">
               <a-icon style="font-size: 25px; color:#82C5EA" type="user-add" /></a-col>
-            <a-col :span="3">
-              <span style="font-family: SimSun; font-size: 16px; position: relative; right: 60px;">粉丝数:{{
+            <a-col :span="6">
+              <span style="font-family: SimSun; font-size: 16px; position: relative; right: 45px;">粉丝数:{{
                 this.tweet_info.user_followers_count }}</span>
             </a-col>
             <a-col :span="3">
               <a-icon style="font-size: 25px; color:#82C5EA" type="usergroup-delete" />
             </a-col>
-            <a-col :span="3">
-              <span style="font-family: SimSun; font-size: 16px; position: relative; right: 60px;">好友数:{{
+            <a-col :span="6">
+              <span style="font-family: SimSun; font-size: 16px; position: relative; right: 45px;">好友数:{{
                 this.tweet_info.user_friends_count }}</span>
             </a-col>
             <a-col :span="12"></a-col>
@@ -70,23 +70,36 @@
           <a-row v-if="rumor_image" :gutter="24">
             <a-col :span="7"></a-col>
             <a-col :span="12">
-              <el-image style="width: 260px; height: 260px; margin-top: -40px;"  :src="this.tweet_info.images_url" fit="contain"></el-image>
+              <el-image style="width: 260px; height: 260px; margin-top: -40px;" :src="this.tweet_info.images_url"
+                fit="contain"></el-image>
             </a-col>
           </a-row>
           <a-row style="height: 100px; margin-left:25px; margin-top: -50px;">
             <a-col :span="3">
               <a-icon style="font-size: 25px; color:#82C5EA" type="share-alt" /></a-col>
             <a-col :span="3">
-              <span style="font-family: SimSun; font-size: 16px; position: relative; right: 60px;">转发:{{
+              <span style="font-family: SimSun; font-size: 16px; position: relative; right: 45px;">转发:{{
                 this.tweet_info.retweet_count }}</span>
             </a-col>
             <a-col :span="12"></a-col>
           </a-row>
 
         </a-card>
-        <el-image v-if="this.image" style="margin-left:0px; margin-top:-100px; width: 700px; height: 700px" :src="rumor"
-          fit="contain"></el-image>
+        <el-image v-if="this.image" style="margin-left:-100px; margin-top:-100px; width: 700px; height: 700px"
+          :src="rumor" fit="contain"></el-image>
       </a-col>
+    </a-row>
+
+
+    <!-- 接下来是模型调用和判定结果部分 -->
+
+    <a-row v-if="!this.image" :gutter="24">
+      <a-card style="height: 550px;" class="second-line mb-24">
+        <template #title>
+          <h6>谣言判定结果</h6>
+          <p>可信度分析</p>
+        </template>
+      </a-card>
     </a-row>
 
   </div>
@@ -178,7 +191,7 @@ export default {
   /* border-radius: 4px; */
   overflow: auto;
   padding: 8px 24px;
-  height: 460px;
+  height: 500px;
 }
 
 .demo-loading-container {
