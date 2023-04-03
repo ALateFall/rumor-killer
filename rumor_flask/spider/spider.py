@@ -22,9 +22,6 @@ def get_trending_tweets(json_file_location="spider/trending_json/location.json",
     trending_things = trending.get_trendings(json_file_location=json_file_location, proxy='127.0.0.1:7890',
                                              filename=trending_json_dir + filename)
 
-    # with open('trending_json/' + filename + '.json', 'r') as f:
-    #     trending_data = json.load(f)
-
     trending_keywords_languages = []
 
     # print(trending_things)

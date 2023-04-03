@@ -1,16 +1,10 @@
-import copy
 import torch
-import numpy as np
-from torch.utils.data import DataLoader
-from sklearn.metrics import accuracy_score, confusion_matrix
-from tqdm import tqdm
-from dataset import FeatureDataset, EvaluateDataset
-from model import SimilarityModule, DetectionModule
-from torchviz import make_dot
+from rumor_model.model import SimilarityModule, DetectionModule
 from transformers import BertModel, BertTokenizer
 from torchvision import models, transforms
 from PIL import Image
 import requests
+from database.utils import *
 from io import BytesIO
 
 # Configs
@@ -21,9 +15,6 @@ BATCH_SIZE = 64
 LR = 1e-3
 L2 = 0  # 1e-5
 NUM_EPOCH = 100
-
-
-# writer = SummaryWriter('logs/tensorboardX_log/2')
 
 
 class TextClassifier(torch.nn.Module):
@@ -88,11 +79,13 @@ def test(text, image_url):
     # --- Data Preprocessing ---
     text = text_to_input(text)
     image = image_to_input(image_url)
+    # text = text
+    # image = image_url
 
     similarity_module = SimilarityModule()
     detection_module = DetectionModule()
-    similarity_module.load_state_dict(torch.load('models/similarity_model.pth', map_location=torch.device('cpu')))
-    detection_module.load_state_dict(torch.load('models/detection_model.pth', map_location=torch.device('cpu')))
+    similarity_module.load_state_dict(torch.load('rumor_model/models/similarity_model.pth', map_location=torch.device('cpu')))
+    detection_module.load_state_dict(torch.load('rumor_model/models/detection_model.pth', map_location=torch.device('cpu')))
 
     similarity_module.eval()
     detection_module.eval()
@@ -100,7 +93,6 @@ def test(text, image_url):
 
 
     with torch.no_grad():
-        batch_size = text.shape[0]
         text = text.to(device)
         image = image.to(device)
 
@@ -110,12 +102,17 @@ def test(text, image_url):
         probability = torch.sigmoid(pre_detection)
         print(probability)
 
-    # return acc_similarity_test, acc_detection_test, loss_similarity_test, loss_detection_test, cm_similarity, cm_detection
-
 
 if __name__ == '__main__':
     # result = text_to_input('This is a test input.')
     # print(result.shape)
     # result = image_to_input('http://pbs.twimg.com/media/FswSVn-X0AAmLhT.jpg')
     # print(result.shape)
-    test('The final week of lent starts today!!! Palm Sunday!!!', 'http://pbs.twimg.com/tweet_video_thumb/FsuAD1qWAAEkvs8.jpg')
+    result = query_tweet(0, 20)
+    print(result[0])
+    # test('I am a genius in playing games!', 'https://pbs.twimg.com/media/FsoIYE6aUAIRj9G.jpg')
+    # train_sample = torch.load('./test_sample.pt')
+    # text, image, label = train_sample
+    # item = 8
+    # test(text[item:item+1, :, :], image[item:item+1, :])
+    # print(label)

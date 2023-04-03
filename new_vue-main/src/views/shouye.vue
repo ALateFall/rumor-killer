@@ -2,7 +2,7 @@
   <div>
     <a-row :gutter="24">
       <a-col :span="leftwidth">
-        <a-card style="height: 600px;" class="second-line mb-24">
+        <a-card style="height: 650px;" class="second-line mb-24">
           <template #title>
             <h6>实时热点推特</h6>
             <p>点击可查看详细信息</p>
@@ -30,7 +30,7 @@
         </a-card>
       </a-col>
       <a-col :span="rightwidth">
-        <a-card v-if="!this.image" style="height: 600px;" class="second-line mb-24">
+        <a-card v-if="!this.image" style="height: 650px;" class="second-line mb-24">
           <template #title>
             <h6>推特详细信息</h6>
             <p>推特正文及谣言判定结果</p>
@@ -84,6 +84,18 @@
             <a-col :span="12"></a-col>
           </a-row>
 
+          <a-row>
+            <a-col :span="10">
+
+            </a-col>
+            <a-col>
+              <a-button type="primary" icon="search" :loading="iconLoading" @click="clickButton">
+                真实性分析
+              </a-button>
+            </a-col>
+
+          </a-row><a-icon type="" />
+
         </a-card>
         <el-image v-if="this.image" style="margin-left:-100px; margin-top:-100px; width: 700px; height: 700px"
           :src="rumor" fit="contain"></el-image>
@@ -93,12 +105,34 @@
 
     <!-- 接下来是模型调用和判定结果部分 -->
 
-    <a-row v-if="!this.image" :gutter="24">
-      <a-card style="height: 550px;" class="second-line mb-24">
+    <a-row v-if="this.showAnaylize" :gutter="24">
+      <a-card style="height: 500px;" class="second-line mb-24">
         <template #title>
           <h6>谣言判定结果</h6>
           <p>可信度分析</p>
         </template>
+        <a-row style="height: 30px"></a-row>
+        <a-row style="height:50px">
+          <a-col :span="1"></a-col>
+          <a-col :span="7">
+            <h6>谣言判定结果:</h6>
+          </a-col>
+          <a-col :span="1"></a-col>
+          <a-col :span="7">
+            <h6>威胁程度分析：</h6>
+          </a-col>
+
+        </a-row>
+        <a-row style="height:100px">
+          <a-col :span="10">
+            <chart />
+          </a-col>
+          <a-col :span="1"></a-col>
+          <a-col :span="11">
+            <radar />
+          </a-col>
+        </a-row>
+
       </a-card>
     </a-row>
 
@@ -106,18 +140,26 @@
 </template>
 
 <script>
-import tweets from "../components/rumor_killer_com/tweets.vue";
+// import tweets from "../components/rumor_killer_com/tweets.vue";
 import rumor_killer from "../assets/img/rumor_killer.png";
 import tweetURL from "../assets/img/tweet.png"
 import infiniteScroll from "vue-infinite-scroll";
+import chart from "../components/rumor_killer_com/rumor_bar.vue"
+import pie from "../components/rumor_killer_com/rumor_pie.vue"
+import radar from "../components/rumor_killer_com/rumor_radar.vue"
 
 export default {
   components: {
-    tweets
+    // tweets,
+    chart,
+    pie,
+    radar
   },
   directives: { infiniteScroll },
   data() {
     return {
+      chartData: [10, 20, 30, 40],
+      showAnaylize: false,
       data: [],
       image: true,
       rumor: rumor_killer,
@@ -129,6 +171,7 @@ export default {
       rightwidth: 12,
       tweet_info: {},
       rumor_image: false,
+      iconLoading: false,
     };
   },
   beforeMount() {
@@ -177,6 +220,43 @@ export default {
         this.loading = false;
       });
     },
+
+
+    async clickButton() {
+      this.iconLoading = true;
+
+      await this.axios
+        .post("http://localhost:5000/tweets/getTrendingTweets")
+        .then(response => {
+          // this.data = data
+          console.log(response);
+          for (var i = 0; i < 10; i++) {
+            this.data.push(response.data[i]);
+          }
+        })
+        .catch(error => {
+          console.log(error);
+        });
+
+      setTimeout(() => {
+        this.iconLoading = false;
+        this.showAnaylize = true; 
+      }, 2500);
+
+      const ctx = document.getElementById('myChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['非谣言', '谣言'],
+          datasets: [{
+            label: 'My Dataset',
+            data: this.chartData,
+            backgroundColor: ['#add8e6', '#1e90ff'],
+          }]
+        }
+      });
+    }
+
   },
 };
 </script>
@@ -191,7 +271,7 @@ export default {
   /* border-radius: 4px; */
   overflow: auto;
   padding: 8px 24px;
-  height: 500px;
+  height: 550px;
 }
 
 .demo-loading-container {
