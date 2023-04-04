@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, request
 from database.utils import *
 from rumor_model.evaluate import *
 
@@ -7,10 +7,8 @@ detection_blueprint = Blueprint('detection', __name__, url_prefix="/detection", 
 
 @detection_blueprint.route('/detectionTweet', methods=["post"])
 def detectionTweet():
-    result = query_tweet(0, 20)
-    # print(result)
-    for item in result:
-        if (',' not in item['images_url']) and (item['images_url']) != "" :
-            test(item['tweet_text'], item['images_url'])
-    # return result
+    data = request.get_json()
+    # print(data)
+    result = test(data['tweet_text'], data['image_url'])
+    return result
 

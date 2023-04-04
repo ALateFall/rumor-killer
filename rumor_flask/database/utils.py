@@ -1,6 +1,7 @@
 from database.database import db
 from database.model.tweets import Tweets
 import traceback
+from sqlalchemy import func
 # from app import app
 
 
@@ -31,7 +32,7 @@ def insert_tweet(keywords, tweet_text, tweet_id, user_name, user_id, user_follow
 
 
 def query_tweet(start, count):
-    result = db.session.query(Tweets).order_by(Tweets.images_url.desc(), Tweets.tweet_id.desc()).filter().slice(start, start + count).all()
+    result = db.session.query(Tweets).order_by(Tweets.images_url.desc(), func.str_to_date(Tweet.create_time.desc(), '%a %b %d %H:%i:%S +0000 %Y')).filter().slice(start, start + count).all()
     result = [r.to_dict() for r in result]
     return result
 

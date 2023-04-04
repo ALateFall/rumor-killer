@@ -53,11 +53,11 @@
               />
             </svg>
           </span>
-          <span class="label">系统态势感知</span>
+          <span class="label">热门话题检测</span>
         </router-link>
       </a-menu-item>
 
-      <a-sub-menu key="data_get" style="padding: 0">
+      <!-- <a-sub-menu key="data_get" style="padding: 0">
         <span slot="title">
           <span class="icon">
             <a-icon type="dashboard" theme="filled" class="m-0" />
@@ -174,7 +174,7 @@
           </span>
           <span class="label">用户权限管理</span>
         </router-link>
-      </a-menu-item>
+      </a-menu-item> -->
     </a-menu>
     <!-- / Sidebar Navigation Menu -->
 

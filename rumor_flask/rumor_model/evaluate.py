@@ -100,8 +100,8 @@ def test(text, image_url):
         text_aligned, image_aligned, _ = similarity_module(text, image)
         pre_detection = detection_module(text, image, text_aligned, image_aligned)
         probability = torch.sigmoid(pre_detection)
-        print(probability)
-
+        # print(probability)
+        return probability.tolist()
 
 if __name__ == '__main__':
     # result = text_to_input('This is a test input.')

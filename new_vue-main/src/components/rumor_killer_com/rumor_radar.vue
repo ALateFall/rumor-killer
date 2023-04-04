@@ -10,10 +10,11 @@ Chart.register(...registerables);
 
 export default ({
   props: [
+    'effect'
   ],
   data() {
     return {
-      height: 400,
+      height: 350,
     };
   },
   mounted() {
@@ -22,13 +23,13 @@ export default ({
       type: 'radar',
       data: {
         labels: [
+          '潜在影响',
+          '传播性',
           '争议性',
-          '影响性',
-          '可信性',
         ],
         datasets: [{
-          label: 'My First Dataset',
-          data: [65, 59, 60],
+          label: '消息传播形式分析',
+          data: [this.effect[0], this.effect[1], this.effect[2]],
           fill: true,
           backgroundColor: 'rgba(255, 99, 132, 0.2)',
           borderColor: 'rgb(255, 99, 132)',
@@ -50,7 +51,7 @@ export default ({
               display: false
             },
             suggestedMin: 50,
-            suggestedMax: 80
+            suggestedMax: 90
           }
         },
         responsive: true,

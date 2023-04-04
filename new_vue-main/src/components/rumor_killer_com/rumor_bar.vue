@@ -12,6 +12,7 @@ Chart.register(...registerables);
 
 export default ({
     props: [
+        'detection'
     ],
     data() {
         return {
@@ -31,7 +32,7 @@ export default ({
                     borderWidth: 0,
                     borderRadius: 4,
                     backgroundColor: '#B37FEB',
-                    data: [8, 2],
+                    data: [this.detection[0], this.detection[1]],
                     fill: false,
                     maxBarThickness: 35
                 }],

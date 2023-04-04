@@ -16,15 +16,15 @@ let routes = [{
 
 	{
 		path: '/index',
-		name: '系统态势感知',
+		name: '热门话题检测',
 		layout: "dashboard",
 		// route level code-splitting
 		// this generates a separate chunk (about.[hash].js) for this route
 		// which is lazy-loaded when the route is visited.
 		meta: {
-			title: '系统态势感知',
+			title: '热门话题检测',
 			sidebarMap: ['dashboards'],
-			breadcrumbs: ['系统态势感知'],
+			breadcrumbs: ['热门话题检测'],
 		},
 		component: () => import( /* webpackChunkName: "dashboard" */ '../views/shouye.vue'),
 	},

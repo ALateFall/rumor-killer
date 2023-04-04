@@ -106,7 +106,7 @@
     <!-- 接下来是模型调用和判定结果部分 -->
 
     <a-row v-if="this.showAnaylize" :gutter="24">
-      <a-card style="height: 500px;" class="second-line mb-24">
+      <a-card style="height: 580px;" class="second-line mb-24">
         <template #title>
           <h6>谣言判定结果</h6>
           <p>可信度分析</p>
@@ -117,7 +117,7 @@
           <a-col :span="7">
             <h6>谣言判定结果:</h6>
           </a-col>
-          <a-col :span="1"></a-col>
+          <a-col :span="5"></a-col>
           <a-col :span="7">
             <h6>威胁程度分析：</h6>
           </a-col>
@@ -125,14 +125,29 @@
         </a-row>
         <a-row style="height:100px">
           <a-col :span="10">
-            <chart />
+            <chart v-bind:detection="this.detection_result[0]" />
           </a-col>
           <a-col :span="1"></a-col>
           <a-col :span="11">
-            <radar />
+            <radar v-bind:effect="this.effect" />
           </a-col>
         </a-row>
+        <a-row style="height:50px">
+        </a-row>
+        <a-row :gutter="24" style="height:100px">
+          <a-col :span="3">
 
+          </a-col>
+          <a-col :span="9">
+            <h6>消息可信度为 <span style="color:#B37FEB">{{ (this.detection_result[0][0] * 100).toFixed(3) + '%' }}</span> </h6>
+
+          </a-col>
+          <a-col :span="1"></a-col>
+          <a-col :span="9">
+            <h6>潜在影响： <span style="color:#B37FEB"> {{ this.effect[0] }}</span>, 传播范围： <span style="color:#B37FEB">{{
+              this.effect[1] }}</span> , 争议性：<span style="color:#B37FEB">{{ this.effect[2] }}</span></h6>
+          </a-col>
+        </a-row>
       </a-card>
     </a-row>
 
@@ -172,6 +187,8 @@ export default {
       tweet_info: {},
       rumor_image: false,
       iconLoading: false,
+      detection_result: [],
+      effect: [0, 0, 0],
     };
   },
   beforeMount() {
@@ -194,6 +211,7 @@ export default {
     },
 
     clickTweet(item) {
+      this.showAnaylize = false;
       this.image = false;
       this.leftwidth = 10;
       this.rightwidth = 14;
@@ -224,15 +242,41 @@ export default {
 
     async clickButton() {
       this.iconLoading = true;
+      if (this.tweet_info.user_followers_count > 200) {
+        this.effect[0] = 90;
+      } else if (this.tweet_info.user_followers_count > 150) {
+        this.effect[0] = 80;
+      } else if (this.tweet_info.user_followers_count > 100) {
+        this.effect[0] = 70;
+      } else {
+        this.effect[0] = 65;
+      }
+
+      if (this.tweet_info.retweet_count > 1000) {
+        this.effect[1] = 90;
+      } else if (this.tweet_info.retweet_count > 500) {
+        this.effect[1] = 80;
+      } else if (this.tweet_info.retweet_count > 100) {
+        this.effect[1] = 70;
+      } else {
+        this.effect[1] = 65;
+      }
 
       await this.axios
-        .post("http://localhost:5000/tweets/getTrendingTweets")
+        .post("http://localhost:5000/detection/detectionTweet", {
+          'tweet_text': this.tweet_info.tweet_text,
+          'image_url': this.tweet_info.images_url
+        })
         .then(response => {
-          // this.data = data
-          console.log(response);
-          for (var i = 0; i < 10; i++) {
-            this.data.push(response.data[i]);
+          this.detection_result = response.data;
+          if (this.detection_result[0][0] > 90) {
+            this.effect[2] = 90;
+          } else if (this.detection_result[0][0] > 80) {
+            this.effect[2] = 80;
+          } else {
+            this.effect[2] = 60;
           }
+          console.log(response);
         })
         .catch(error => {
           console.log(error);
@@ -240,21 +284,8 @@ export default {
 
       setTimeout(() => {
         this.iconLoading = false;
-        this.showAnaylize = true; 
+        this.showAnaylize = true;
       }, 2500);
-
-      const ctx = document.getElementById('myChart').getContext('2d');
-      new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: ['非谣言', '谣言'],
-          datasets: [{
-            label: 'My Dataset',
-            data: this.chartData,
-            backgroundColor: ['#add8e6', '#1e90ff'],
-          }]
-        }
-      });
     }
 
   },
